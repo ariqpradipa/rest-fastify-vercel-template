@@ -4,27 +4,27 @@ dotenv.config();
 // Require the framework
 import fastify from "fastify";
 import cors from '@fastify/cors';
-import routes from "../src/app";
+import app from "../src/app";
 
-// Instantiate Fastify with some config
-const app = fastify({
+// Instantiate Fastify instance with configuration
+const instance = fastify({
     logger: false,
 });
 
 // Register CORS
-app.register(cors, {
+instance.register(cors, {
     origin: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
 });
 
-// Register your application as a normal plugin.
-app.register(routes, {
+// Register app to use the routes
+instance.register(app, {
     prefix: "/",
 });
 
 export default async (req: any, res: any) => {
-    await app.ready();
-    app.server.emit("request", req, res);
+    await instance.ready();
+    instance.server.emit("request", req, res);
 };
